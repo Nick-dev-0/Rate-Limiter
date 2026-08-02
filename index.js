@@ -7,17 +7,30 @@ const capacity = 10;
 const refillRatePerSec = 2;
 let lastRefill = Date.now();
 
-app.use((req, res, next) => {
-    const now = Date.now();
-    const elapsedSec = (now - lastRefill) / 1000;
-    tokens = Math.min(capacity, tokens + elapsedSec * refillRatePerSec)
-    lastRefill = now;
+function checkTokenBucket(state, now, capacity, refillRatePerSec) {
+    const elapsedSec = (now - state.lastRefill)/ 1000;
+    const refilled = Math.min(capacity, state.tokens + elapsedSec * refillRatePerSec)
 
-    if (tokens < 1) {
-        return res.status(429).json({ error: "Too many requests"})
+    if (refilled < 1) {
+        return {allowed: false, tokens: refilled, lastRefill: now};
     }
-    tokens -=1
-    console.log(`tokens remaining: ${tokens.toFixed(2)}`)
+    return {allowed: true, tokens: refilled - 1, lastRefill: now};
+}
+app.use((req, res, next) => {
+    const result = checkTokenBucket(
+        {tokens, lastRefill},
+        Date.now(),
+        capacity,
+        refillRatePerSec
+    );
+
+    tokens = result.tokens;
+    lastRefill = result.lastRefill;
+
+    if (!result.allowed) {
+        return res.status(429).json({ error: "Too many requests" });
+    }
+    
     return next();
 })
 app.get('/', (req, res) => {
