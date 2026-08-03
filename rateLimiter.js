@@ -6,14 +6,14 @@ class TokenBucketRateLimiter {
     }
 
     checkTokenBucket(state, now) {
-    const elapsedSec = (now - state.lastRefill) / 1000;
-    const refilled = Math.min(this.capacity, state.tokens + elapsedSec * this.refillRatePerSec)
+        const elapsedSec = (now - state.lastRefill) / 1000;
+        const refilled = Math.min(this.capacity, state.tokens + elapsedSec * this.refillRatePerSec)
 
-    if (refilled < 1) {
-        return {'allowed': false, 'tokens': refilled, 'lastRefill': now};
+        if (refilled < 1) {
+            return {'allowed': false, 'tokens': refilled, 'lastRefill': now};
+        }
+        return {"allowed": true, 'tokens': refilled - 1, 'lastRefill': now};
     }
-    return {"allowed": true, 'tokens': refilled - 1, 'lastRefill': now};
-  }
 
     middleware() {
         return (req, res, next) => {
