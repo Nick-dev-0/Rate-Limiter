@@ -26,8 +26,13 @@ class TokenBucketRateLimiter {
 
             const result = this.checkTokenBucket(state, Date.now());
             this.buckets.set(key, { 'tokens': result.tokens, 'lastRefill': result.lastRefill}  );
-            console.log(key, { 'tokens': result.tokens, 'lastRefill': result.lastRefill})
+            
+            res.setHeader("X-RateLimit-Limit", this.capacity);
+            res.setHeader("X-RateLimit-Remaining", Math.floor(result.tokens))
+            
             if (!result.allowed) {
+                const retryAfterSec = Math.ceil((1 - result.tokens) / this.refillRatePerSec);
+                res.setHeader("Retry-After", retryAfterSec)
                 return res.status(429).json({ 'error': "Too many requests" })
             }
             return next();
