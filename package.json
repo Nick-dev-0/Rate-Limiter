@@ -1,15 +1,18 @@
 {
-  "name": "rate-limiter",
+  "name": "rate-token-bucket-limiter",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Token bucket rate limiting middleware for Express, per client",
+  "main": "rateLimiter.js",
   "scripts": {
-    "test": "jest",
-    "dev": "nodemon index.js"
+    "test": "jest"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["rate-limit", "express", "token-bucket"],
+  "author": "Nick-dev-0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nick-dev-0/Rate-Limiter"
+  },
   "type": "commonjs",
   "dependencies": {
     "express": "^5.2.1"
