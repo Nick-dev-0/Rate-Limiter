@@ -27,6 +27,6 @@ describe("checkTokenBucket", () => {
         const result = limiter.checkTokenBucket(state, 4000) 
 
         expect(result.allowed).toBe(true)
-        expect(result.tokens).toBe(5) // 3s * 2 rps = 6 tokens to be refilled, minus 1 spent. total of 5 now
+        expect(result.tokens).toBe(5)
     })
 })
