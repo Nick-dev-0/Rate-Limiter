@@ -1,10 +1,11 @@
 {
   "name": "rate-token-bucket-limiter",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "description": "Token bucket rate limiting middleware for Express, per client",
   "main": "rateLimiter.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "dev": "nodemon index.js"
   },
   "keywords": [
     "rate-limit",

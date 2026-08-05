@@ -1,8 +1,10 @@
+const MemoryStore = require("./stores/MemoryStore")
+
 class TokenBucketRateLimiter {
-    constructor({ capacity, refillRatePerSec }) {
+    constructor({ capacity, refillRatePerSec, store = new MemoryStore() }) {
         this.capacity = capacity;
         this.refillRatePerSec = refillRatePerSec;
-        this.buckets = new Map();
+        this.store = store;
     }
 
     checkTokenBucket(state, now) {
@@ -16,16 +18,16 @@ class TokenBucketRateLimiter {
     }
 
     middleware() {
-        return (req, res, next) => {
+        return async (req, res, next) => {
             const key = req.ip;
 
-            let state = this.buckets.get(key);
+            let state = await this.store.get(key);
             if (!state) {
                 state = { 'tokens': this.capacity, 'lastRefill': Date.now() };
             }
 
             const result = this.checkTokenBucket(state, Date.now());
-            this.buckets.set(key, { 'tokens': result.tokens, 'lastRefill': result.lastRefill}  );
+            await this.store.set(key, { 'tokens': result.tokens, 'lastRefill': result.lastRefill}  );
             
             res.setHeader("X-RateLimit-Limit", this.capacity);
             res.setHeader("X-RateLimit-Remaining", Math.floor(result.tokens))
