@@ -1,5 +1,5 @@
 require('dotenv').config()
-const express = require('express');;
+const express = require('express');
 const TokenBucketRateLimiter = require('./rateLimiter');
 const RedisStore = require("./stores/RedisStore")
 
