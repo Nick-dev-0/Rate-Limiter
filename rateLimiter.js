@@ -21,7 +21,7 @@ class TokenBucketRateLimiter {
         return async (req, res, next) => {
             const key = req.ip;
 
-            let state = await this.store.get(key);
+            let state = JSON.parse(await this.store.get(key));
             if (!state) {
                 state = { 'tokens': this.capacity, 'lastRefill': Date.now() };
             }
